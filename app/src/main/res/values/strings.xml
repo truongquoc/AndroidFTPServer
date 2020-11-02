@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">FTPServer</string>
+    <string name="access_network_permission_granted">Access network permission was granted. Starting preview.</string>
+    <string name="access_network_permission_denied">Access network permission was granted. Starting preview.</string>
+    <string name="access_network_permission_available">Access network permission is available. Starting Connect.</string>
+    <string name="access_network_permission_unavailable">Access network permission is unavailable. Starting Connect.</string>
+    <string name="network_access_required">Network access is required to display the  connect server.</string>
+    <string name="ok">OK</string>
+</resources>
