@@ -40,7 +40,6 @@ class ServerSocketThread  extends Thread {
         try {
             serverSocket = new ServerSocket(PORT);
             dataServerSocket = new ServerSocket(PORT - 1);
-
             while (true) {
                try {
                    MainActivity.infoMsg.setText("FTP Server running on"+ getIPAddress(true)+ " PORT: "+ PORT);

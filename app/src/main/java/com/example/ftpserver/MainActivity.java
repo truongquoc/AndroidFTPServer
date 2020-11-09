@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private static ExecutorService pool = Executors.newFixedThreadPool(4);
     private static final int PERMISSION_REQUEST_CAMERA = 0;
     private static final int PERMISSION_REQUEST_NETWORK = 0;
+    private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_DISK = 0;
     private ServerSocket serverSocket;
     private ServerSocket dataServerSocket;
     private View mLayout;
@@ -102,16 +103,43 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private void showExternalPreview() {
         //Check if the Network Permission has been granted
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            //Permission is already available start connect socket
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
+//            //Permission is already available start connect socket
+//            Snackbar.make(mLayout,
+//                    "Read external Disk is available",
+//                    Snackbar.LENGTH_SHORT).show();
+//        } else  {
+//            requestNetworkPermission();
+//        }
+
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Snackbar.make(mLayout,
-                    R.string.access_network_permission_available,
+                    "Write external Disk is available",
                     Snackbar.LENGTH_SHORT).show();
-        } else  {
-            requestNetworkPermission();
+        } else {
+            requestWriteExternal();
         }
     }
 
+    private void requestWriteExternal() {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Snackbar.make(mLayout, "Write to External Disk is required to access Your directory's phone",
+                    Snackbar.LENGTH_INDEFINITE).setAction(R.string.ok, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Request the permission
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PERMISSION_REQUEST_WRITE_EXTERNAL_DISK);
+                }
+            }).show();
+        } else {
+            Snackbar.make(mLayout, "Access to Disk is unavailable", Snackbar.LENGTH_SHORT).show();
+            // Request the permission. The result will be received in onRequestPermissionResult().
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_WRITE_EXTERNAL_DISK);
+        }
+    }
     private void requestNetworkPermission() {
         if(ActivityCompat.shouldShowRequestPermissionRationale(this,  Manifest.permission.READ_EXTERNAL_STORAGE)) {
             Snackbar.make(mLayout, R.string.network_access_required,
