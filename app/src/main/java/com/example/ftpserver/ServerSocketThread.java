@@ -13,19 +13,25 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.List;
 
-class ServerSocketThread  extends Thread {
+public class ServerSocketThread  extends Thread {
 
-    private ServerSocket serverSocket;
-    private ServerSocket dataServerSocket;
+    public static ServerSocket serverSocket;
+    public static ServerSocket dataServerSocket;
+    public static Socket client;
     private ObjectInputStream sInput;
     private ObjectOutputStream sOutput;
     private String dir;
     private final String root = Environment.getExternalStorageState();
+    public static String username, password;
+    private volatile boolean stopThread =  false;
+    public static boolean isRunning = true;
+    static boolean status = true;
+    public ServerSocketThread(String username, String password)  {
 
-    public ServerSocketThread()  {
+        this.username = username;
+        this.password = password;
         File file = new File(Environment.getExternalStorageState());
         this.dir = file.getAbsolutePath();
-
     }
 
     public static final int PORT = 3306;
@@ -35,22 +41,27 @@ class ServerSocketThread  extends Thread {
 
 //    }
 
+
     @Override
     public void run() {
         try {
             serverSocket = new ServerSocket(PORT);
             dataServerSocket = new ServerSocket(PORT - 1);
-            while (true) {
+            while (isRunning) {
                try {
                    MainActivity.infoMsg.setText("FTP Server running on"+ getIPAddress(true)+ " PORT: "+ PORT);
-                   Socket client = serverSocket.accept();
+                   client = serverSocket.accept();
                    MainActivity.infoMsg.setText("Connection FTPClient from "+ client.getInetAddress()+ "PORT: "+client.getPort());
                    FtpServer ftpServer = new FtpServer(client, dataServerSocket);
-                   ftpServer.start();
+                   if(status) new Thread(ftpServer).start();
                } catch (Exception e) {
                    e.printStackTrace();
                }
             }
+//            if(!isRunning) {
+//                serverSocket.close();
+//                dataServerSocket.close();
+//            }
         } catch (Exception e) {
             e.printStackTrace();
            return;

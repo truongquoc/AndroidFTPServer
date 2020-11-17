@@ -3,7 +3,10 @@ package com.example.ftpserver;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -23,7 +28,11 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     public static final int SERVER_PORT = 3306;
-    public static TextView infoMsg;
+    public static TextView infoMsg, userDisp, pwdDisp;
+    public static TextInputEditText username;
+    public static TextInputEditText password;
+    private TextInputLayout userParent, pwdParent;
+    private Switch togglePwd;
     String message;
     private static ArrayList<ServerSocketThread> serverSocketThreads = new ArrayList<>();
     private static ExecutorService pool = Executors.newFixedThreadPool(4);
@@ -33,26 +42,91 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private ServerSocket serverSocket;
     private ServerSocket dataServerSocket;
     private View mLayout;
+    private boolean status = false;
     static final int PORT = 3306;
-
+    Thread serverSocketThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         infoMsg = findViewById(R.id.msg);
         mLayout = findViewById(R.id.main_layout);
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
+        userDisp = findViewById(R.id.usernameDisp);
+        pwdDisp = findViewById(R.id.pwdDisp);
+        userParent = findViewById(R.id.userParent);
+        pwdParent = findViewById(R.id.pwdParent);
+        togglePwd = findViewById(R.id.togglePwd);
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startServer();
+                status = !status;
+                if(status) {
+                    username.setVisibility(View.INVISIBLE);
+                    userParent.setVisibility(View.INVISIBLE);
+                    pwdParent.setVisibility(View.INVISIBLE);
+                    String txtUsername = String.valueOf(username.getText());
+                    String txtPwd = String.valueOf(pwdDisp.getText());
+                    if(txtUsername.isEmpty()) {
+                        username.setText("ftp");
+                        userDisp.setText("Username: ftp");
+                    } else {
+                        userDisp.setText(String.format("ftp: %s", username.getText()));
+                    }
+                    if(txtPwd.isEmpty()) {
+                        password.setText("123456");
+                    } else  {
+                        pwdDisp.setText(password.getText());
+                    }
+                    StringBuilder stringBuilder = new StringBuilder("Password: ");
+                    for(int i=0; i<password.getText().length(); i++) {
+                        stringBuilder.append("*");
+                    }
+                    pwdDisp.setText(stringBuilder.toString());
+                    userDisp.setVisibility(View.VISIBLE);
+                    password.setVisibility(View.INVISIBLE);
+                    pwdDisp.setVisibility(View.VISIBLE);
+
+                    togglePwd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if(b) {
+                                pwdDisp.setText(String.format("Password: %s", password.getText()));
+                            } else {
+                                String pwd = "";
+                                StringBuilder stringBuilder = new StringBuilder("Password: ");
+                                for(int i=0; i< password.getText().length(); i++) {
+                                    stringBuilder.append("*");
+                                }
+                                pwdDisp.setText(stringBuilder.toString());
+                            }
+                        }
+                    });
+                    Log.d("tag", "startServer");
+                    ServerSocketThread.isRunning = true;
+                    startServer();
+                } else {
+                    Log.d("tag", "stopServer");
+                    ServerSocketThread.isRunning = false;
+                  try {
+                      ServerSocketThread.serverSocket.close();
+                      ServerSocketThread.dataServerSocket.close();
+                      ServerSocketThread.client.close();
+                  } catch (Exception e) {
+                      e.printStackTrace();
+                  }
+                }
             }
         });
         showExternalPreview();
     }
 
     void startServer()  {
-        Thread serverSocketThread = new Thread(new ServerSocketThread());
-        serverSocketThread.start();
+            String txtUsername = String.valueOf(username.getText());
+            String txtPassword = String.valueOf(password.getText());
+            serverSocketThread = new Thread(new ServerSocketThread(txtUsername, txtPassword));
+            serverSocketThread.start();
     }
 
     public static String getIPAddress(boolean useIPv4) {

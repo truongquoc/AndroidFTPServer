@@ -21,6 +21,7 @@ public class FtpServer extends Thread {
     private FileInputStream fis;
     private BufferedInputStream bis;
    private ServerSocket dataSocket;
+
     private String dir, root;
     public FtpServer(Socket clientSocket, ServerSocket dataSocket) {
         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() );
@@ -31,9 +32,22 @@ public class FtpServer extends Thread {
         try {
             sInput = new ObjectInputStream(client.getInputStream());
             sOutput = new ObjectOutputStream(client.getOutputStream());
-            sOutput.writeObject("Success");
+            String username = (String) sInput.readObject();
+            String password = (String) sInput.readObject();
+            Log.d("username", username);
+            Log.d("pass", password);
+            if(username.compareTo(ServerSocketThread.username) == 0 && password.compareTo(ServerSocketThread.password) == 0) {
+                sOutput.writeObject("Success");
+                ServerSocketThread.status = true;
+            } else {
+                ServerSocketThread.status = false;
+                sOutput.writeObject("Failed");
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            return;
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
             return;
         }
     }

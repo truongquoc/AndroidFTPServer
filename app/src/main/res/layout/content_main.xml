@@ -11,11 +11,13 @@
         android:layout_marginTop="25dp"
         >
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
@@ -24,12 +26,18 @@
                 android:textColorHint="#a3a3a3"
                 android:visibility="visible" />
         </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/usernameDisp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="19dp"
+            android:textStyle="bold"
+            android:textColor="#a3a3a3"
+            android:gravity="left"
+            android:visibility="invisible"
+            />
 
-        <!--        <TextView-->
-        <!--            android:id="@+id/textView3"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="TextView" />-->
 
 
     </RelativeLayout>
@@ -41,11 +49,13 @@
         >
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/pwdParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
@@ -54,8 +64,30 @@
                 android:textColorHint="#a3a3a3"
                 android:visibility="visible" />
         </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/pwdDisp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="19dp"
+            android:textStyle="bold"
+            android:textColor="#a3a3a3"
+            android:gravity="left"
+            android:visibility="invisible"
+            />
+
     </RelativeLayout>
 
+    <Switch
+        android:id="@+id/togglePwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Password"
+        android:layout_gravity="left"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:padding="4dp"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -66,7 +98,7 @@
             android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
+            android:text="Start"
             android:layout_marginTop="25dp"
             />
     </RelativeLayout>
