@@ -1,5 +1,6 @@
 package com.example.ftpserver;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -21,11 +22,17 @@ public class FtpServer extends Thread {
     private FileInputStream fis;
     private BufferedInputStream bis;
    private ServerSocket dataSocket;
-
+    public static Context mainContext;
     private String dir, root;
+    public static void getPathexteralStorage(Context context) {
+        context.getFilesDir();
+    }
     public FtpServer(Socket clientSocket, ServerSocket dataSocket) {
         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() );
+        File newFile = new File(mainContext.getExternalFilesDir(null).getAbsolutePath());
         this.dir = file.getAbsolutePath();
+        Log.d("----->path", this.dir);
+
         this.root = dir;
         this.client = clientSocket;
         this.dataSocket = dataSocket;
@@ -51,6 +58,9 @@ public class FtpServer extends Thread {
             return;
         }
     }
+//    private static File getFileDir(Context context) {
+//        return context.getFilesDir();
+//    }
     @Override
     public void run() {
                while (true) {

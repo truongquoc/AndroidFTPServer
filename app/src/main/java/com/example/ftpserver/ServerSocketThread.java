@@ -35,12 +35,6 @@ public class ServerSocketThread  extends Thread {
     }
 
     public static final int PORT = 3306;
-//    public ServerSocketThread(Socket clientSocket, ServerSocket dataClient) {
-//        this.client = clientSocket;
-//        this.dataClient = dataClient;
-
-//    }
-
 
     @Override
     public void run() {

@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        String destPath = MainActivity.ge(null).getAbsolutePath();
+        FtpServer.mainContext = MainActivity.this;
         setContentView(R.layout.activity_main);
         infoMsg = findViewById(R.id.msg);
         mLayout = findViewById(R.id.main_layout);
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         userParent = findViewById(R.id.userParent);
         pwdParent = findViewById(R.id.pwdParent);
         togglePwd = findViewById(R.id.togglePwd);
+
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
